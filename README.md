@@ -1,13 +1,17 @@
 # jmx-dump
-
-Dumping all MBeans info from a JMX server
+Dumping MBeans info from a JMX server
 
 ## Usage
-    # Set jmx.remote for a java process
+Set jmx.remote for a java process
+
     $ SERVER_JVMFLAGS="-Dcom.sun.management.jmxremote.port=12345 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=127.0.0.1" java -jar run-something.jar
 
-    # Start jmx-dump with JMX_HOST and JMX_PORT
+Start jmx-dump with JMX_HOST and JMX_PORT
+
     $ export JMX_HOST="127.0.0.1" JMX_PORT=12345
+
+Run
+
     $ lein run
     JMX_HOST is 127.0.0.1 and JMX_PORT is 12345
     MBean: JMImplementation:type=MBeanServerDelegate
@@ -16,7 +20,6 @@ Dumping all MBeans info from a JMX server
       :SpecificationName Java Management Extensions
       :SpecificationVersion 1.4
     ...
-
 
 ## TODO
 - Currently the jmx-dump can only connect to an application that with `jmxremote.port` open.
