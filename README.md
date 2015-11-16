@@ -21,6 +21,13 @@ Run
       :SpecificationVersion 1.4
     ...
 
+## Environment Variables
+
+    JMX_HOST: The host of JMX endpoint.
+    JMX_PORT: The port of JMX endpoint.
+    JMX_QUERY (optional): If not set, '*:*' are used.
+    JMX_NOCOLOR (optional): If set, colorized output will be disabled.
+
 ## TODO
 - Currently the jmx-dump can only connect to an application that with `jmxremote.port` open.
   Might be good to have some other connecting options
