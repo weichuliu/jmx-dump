@@ -3,5 +3,5 @@
             [jmx-dump.core :refer :all]))
 
 (deftest a-test
-  (testing "FIXME, I fail."
+  (testing "Fake test."
     (is (= 0 1))))

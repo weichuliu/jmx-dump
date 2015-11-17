@@ -26,10 +26,18 @@
       (str \u001b color s \u001b reset)
       s)))
 
+(defn gen-credential
+  "If both user and password exist, generate a credential hash-map from it, else a empty map"
+  [jmx-user jmx-password]
+  (if (and jmx-user jmx-password)
+    (hash-map javax.management.remote.JMXConnector/CREDENTIALS (into-array String [jmx-user jmx-password]))
+    (hash-map)))
+
 (defn dump-mbeans
-  "Given a [host port], list all MBeans and all attributes in each MBeans "
-  [jmx-host jmx-port jmx-query]
-  (jmx/with-connection {:host jmx-host :port jmx-port}
+  "Given a [host port], list all MBeans and all attributes in each MBeans"
+  [jmx-host jmx-port jmx-query jmx-user jmx-password]
+  (jmx/with-connection {:host jmx-host :port jmx-port
+                        :environment (gen-credential jmx-user jmx-password)}
     (let [mbean-list (sort (map str (jmx/mbean-names jmx-query)))
           red     #(colorize :red %)
           green   #(colorize :green %)
@@ -61,10 +69,13 @@
     (let [
       jmx-host (System/getenv "JMX_HOST")
       jmx-port (System/getenv "JMX_PORT")
-      jmx-query (or (System/getenv "JMX_QUERY") "*:*")]
+      jmx-query (or (System/getenv "JMX_QUERY") "*:*")
+      jmx-user (System/getenv "JMX_USER")
+      jmx-password (System/getenv "JMX_PASSWORD")
+      ]
       ; Check if ENV VAR are set. jmx-port are str but it works.
       (if (some nil? [jmx-host jmx-port])
         (throw (Exception. "JMX_HOST, JMX_PORT has to be set, JMX_PORT has to be a port number"))
-        (printf "Querying '%s' to %s:%s%n" jmx-query jmx-host jmx-port))
+        (printf "Querying '%s' to %s:%s (%s:%s)%n" jmx-query jmx-host jmx-port jmx-user jmx-password))
       ; Get all MBeans' name -> mbean-list
-      (dump-mbeans jmx-host jmx-port jmx-query))))
+      (dump-mbeans jmx-host jmx-port jmx-query jmx-user jmx-password))))

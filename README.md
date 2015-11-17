@@ -25,6 +25,8 @@ Run
 
     JMX_HOST: The host of JMX endpoint.
     JMX_PORT: The port of JMX endpoint.
+    JMX_USER (optional): User for authentication.
+    JMX_PASSWORD (optional): Password for authentication.
     JMX_QUERY (optional): If not set, '*:*' are used.
     JMX_NOCOLOR (optional): If set, colorized output will be disabled.
 
