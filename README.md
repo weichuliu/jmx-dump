@@ -2,13 +2,19 @@
 Dumping MBeans info from a JMX server
 
 ## Usage
-Set jmx.remote for a java process
+Start a java process with jmx.remote enabled, as target of JMX dumping
 
     $ SERVER_JVMFLAGS="-Dcom.sun.management.jmxremote.port=12345 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=127.0.0.1" java -jar run-something.jar
 
-Start jmx-dump with JMX_HOST and JMX_PORT
+Setup environment variable for jmx-dump to find target jvm process:
+
+It can be either JMX_HOST and JMX_PORT (with JMX_USER and JMX_PASSWORD optional)
 
     $ export JMX_HOST="127.0.0.1" JMX_PORT=12345
+
+Or JMX_PID
+
+    $ export JMX_PID="pid of target java process"
 
 Run
 
@@ -21,8 +27,14 @@ Run
       :SpecificationVersion 1.4
     ...
 
+Build standalone jarfile and run
+
+    $ lein uberjar
+    $ java -jar /path/to/jmx-dump-VER-standalone.jar
+
 ## Environment Variables
 
+    JMX_PID: The pid of JMX endpoint.
     JMX_HOST: The host of JMX endpoint.
     JMX_PORT: The port of JMX endpoint.
     JMX_USER (optional): User for authentication.
@@ -30,14 +42,11 @@ Run
     JMX_QUERY (optional): If not set, '*:*' are used.
     JMX_NOCOLOR (optional): If set, colorized output will be disabled.
 
-## TODO
-- Currently the jmx-dump can only connect to an application that with `jmxremote.port` open.
-  Might be good to have some other connecting options
-- Add some other fancy features one day.
-
+## Limitation
+A function used in the code is removed in java 9. So this can only be run by java 8
 
 ## Author
-Weichu Liu (weichu.liu@rakuten.com)
+Weichu Liu (@weichu)
 
 ## License
 The code of `jmx-dump` is distributed under Beerware License:

@@ -1,4 +1,4 @@
-(defproject jmx-dump "0.1.0"
+(defproject jmx-dump "0.1.1"
   :description "Dumping MBeans info from a JMX server"
   :url ""
   :license {:name "Beerware"

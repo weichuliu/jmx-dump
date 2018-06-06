@@ -1,5 +1,6 @@
 (ns jmx-dump.core
   (:require [clojure.java.jmx :as jmx])
+  (:import [sun.management.ConnectorAddressLink])
   (:gen-class))
 
 (defn colorize [color-name s]
@@ -34,9 +35,11 @@
     (hash-map)))
 
 (defn dump-mbeans
-  "Given a [host port], list all MBeans and all attributes in each MBeans"
-  [jmx-host jmx-port jmx-query jmx-user jmx-password]
-  (jmx/with-connection {:host jmx-host :port jmx-port
+  "Connect to a jmx rmi with either [jmx-url] or [jmx-host jmx-port jmx-user jmx-password].
+  then list MBeans matching [jmx-query], with attributes in each MBeans"
+  [jmx-url jmx-host jmx-port jmx-query jmx-user jmx-password]
+  (jmx/with-connection {:url jmx-url
+                        :host jmx-host :port jmx-port
                         :environment (gen-credential jmx-user jmx-password)}
     (let [mbean-list (sort (map str (jmx/mbean-names jmx-query)))
           red     #(colorize :red %)
@@ -72,10 +75,14 @@
       jmx-query (or (System/getenv "JMX_QUERY") "*:*")
       jmx-user (System/getenv "JMX_USER")
       jmx-password (System/getenv "JMX_PASSWORD")
+      jmx-pid (System/getenv "JMX_PID")
       ]
       ; Check if ENV VAR are set. jmx-port are str but it works.
-      (if (some nil? [jmx-host jmx-port])
-        (throw (Exception. "JMX_HOST, JMX_PORT has to be set, JMX_PORT has to be a port number"))
-        (printf "Querying '%s' to %s:%s (%s:%s)%n" jmx-query jmx-host jmx-port jmx-user jmx-password))
-      ; Get all MBeans' name -> mbean-list
-      (dump-mbeans jmx-host jmx-port jmx-query jmx-user jmx-password))))
+      (if (and (nil? jmx-pid) (some nil? [jmx-host jmx-port]))
+        (throw (Exception. "Either JMX_PID or JMX_HOST+JMX_PORT has to be set, JMX_PORT has to be a port number"))
+        (let [jmx-url (if (some? jmx-pid) (sun.management.ConnectorAddressLink/importFrom (Integer. jmx-pid)) nil)]
+          (if (some? jmx-pid)
+            (printf "Querying '%s' to %n" jmx-pid)
+            (printf "Querying '%s' to %s:%s (%s:%s)%n" jmx-query jmx-host jmx-port jmx-user jmx-password))
+          ; Get all MBeans' name -> mbean-list
+          (dump-mbeans jmx-url jmx-host jmx-port jmx-query jmx-user jmx-password))))))
