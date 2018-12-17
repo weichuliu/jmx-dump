@@ -80,7 +80,7 @@
       ; Check if ENV VAR are set. jmx-port are str but it works.
       (if (and (nil? jmx-pid) (some nil? [jmx-host jmx-port]))
         (throw (Exception. "Either JMX_PID or JMX_HOST+JMX_PORT has to be set, JMX_PORT has to be a port number"))
-        (let [jmx-url (if (some? jmx-pid) (sun.management.ConnectorAddressLink/importFrom (Integer. jmx-pid)) nil)]
+        (let [jmx-url (if (some? jmx-pid) (sun.management.ConnectorAddressLink/importFrom (Integer. jmx-pid)) (jmx/jmx-url {:host jmx-host :port jmx-port}))]
           (if (some? jmx-pid)
             (printf "Querying '%s' to %n" jmx-pid)
             (printf "Querying '%s' to %s:%s (%s:%s)%n" jmx-query jmx-host jmx-port jmx-user jmx-password))
